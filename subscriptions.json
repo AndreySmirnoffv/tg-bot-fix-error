@@ -1,0 +1,23 @@
+[
+	{
+		"isFree": false,
+		"name": "Тариф №1",
+		"price": 130,
+		"emoji": "🌒",
+		"requests": 1
+	},
+	{
+		"isFree": false,
+		"name": "Тариф №2",
+		"price": 500,
+		"emoji": "🌓",
+		"requests": 5
+	},
+	{
+		"isFree": false,
+		"name": "Тариф №3",
+		"price": 800,
+		"emoji": "🌖",
+		"requests": 10
+	}
+]
