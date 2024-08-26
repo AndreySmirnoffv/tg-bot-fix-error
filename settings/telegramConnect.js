@@ -1,8 +1,5 @@
-const { Telegraf } = require('telegraf')
+import pkg from 'telegraf';
+const { Telegraf } = pkg;
 
 const token = '7469752756:AAHtqjwo-qSvCkszIqqhKn7ziroSgxXUDgM';
-const bot = new Telegraf(token)
-
-module.exports = {
-    bot
-}
+export const bot = new Telegraf(token)

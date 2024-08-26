@@ -1,7 +1,7 @@
 const timers = {};
 
 
-function addTimer(name, timeToEnable, callback)
+export function addTimer(name, timeToEnable, callback)
 {
     timers[name] = {
         id: setTimeout(() => removeTimer(name), timeToEnable - Date.now()),
@@ -10,7 +10,7 @@ function addTimer(name, timeToEnable, callback)
 }
 
 
-function removeTimer(name) 
+export function removeTimer(name) 
 {
     if (timers[name]) 
 	{
@@ -22,8 +22,4 @@ function removeTimer(name)
     }
 }
 
-
-module.exports = {
-  addTimer,
-  removeTimer
-};
+export default timers

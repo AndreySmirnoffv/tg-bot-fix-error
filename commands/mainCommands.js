@@ -1,12 +1,13 @@
-const { saveUser } = require('../settings/functions.js')
-const information = require('../ifo.json');
-const { bot } = require('../settings/telegramConnect.js');
-const { $user, $report } = require('../mongoose.js');
-const fs = require("fs")
+import { saveUser } from '../settings/functions.js';
+import information from '../ifo.json' assert { type: 'json' };
+import { bot } from '../settings/telegramConnect.js';
+import { $user, $report } from '../mongoose.js';
+import fs from 'fs';
+import stiker from '../settings/stikers.json' assert { type: 'json' };
+import rq from 'prequest';
+
 const num_requests = information.num_requests;
 const BlackList = information.blackList;
-const stiker = require('../settings/stikers.json');
-const rq = require("prequest");
 
 
 async function logging(id, text) {
@@ -52,7 +53,7 @@ const getSubscriptions = () => {
 const generateSubListKeyboard = (callback_tag = `subPayConfirm`) => {
 
     let keyboard = [];
-    let subs = getSubscriptions();
+    let subs = require("../subscriptions.json");
 	let prefix = "отчёт"
 	
     for(let i in subs) {

@@ -1,12 +1,12 @@
-const { $user } = require('../mongoose.js');
-const information = require('../ifo.json');
-const { bot } = require('./telegramConnect.js');
+import { $user } from '../mongoose.js';
+import information from '../ifo.json' assert { type: 'json' };
+import { bot } from './telegramConnect.js';
+import stiker from '../settings/stikers.json' assert { type: 'json' };
+import rq from 'prequest';
+
 const ADMINS = information.admins;
-const stiker = require('../settings/stikers.json');
-const rq = require("prequest");
 
-
-async function saveUser(id, count, name) {
+export async function saveUser(id, count, name) {
     try
     {
         if (name === undefined) {
@@ -78,7 +78,7 @@ async function saveUser(id, count, name) {
 }
 
 
-async function main_keyboard(ctx) {
+export async function main_keyboard(ctx) {
     if (ADMINS.includes(ctx.from.id)) {   
         return await ctx.replyWithMarkdown(`💬 *Возвращаемся в главное меню...*`, {
             reply_markup: {
@@ -161,7 +161,7 @@ async function main_keyboard(ctx) {
 }
 
 
-async function admin_keyboard(ctx) {
+export async function admin_keyboard(ctx) {
     const { result } = await rq(`https://data.tronk.info/profile.ashx?key=${information.api}`)
     if (!result) return ctx.replyWithMarkdown(`⛔️ Ошибка с *получением данных*.`)
     
@@ -229,7 +229,7 @@ async function admin_keyboard(ctx) {
 
 
 
-const utils = {
+export const utils = {
     sp: (int) => {
         int = int.toString();
         return int.split('').reverse().join('').match(/[0-9]{1,3}/g).join('.').split('').reverse().join('');
@@ -284,7 +284,7 @@ const utils = {
 }
 
 
-function time(type) {
+export function time(type) {
     var time = new Date()
     if (time.getSeconds().toString().length == 1) {
         var sec = "0" + time.getSeconds()
@@ -361,19 +361,19 @@ function time(type) {
 }
 
 
-function setTime(sec) 
+export function setTime(sec) 
 {
     return `${unixStampLeft(sec * 1000)}`
 };
 
 
-function getUnix() 
+export function getUnix() 
 {
     return Date.now();
 }
 
 
-function unixStamp(stamp) 
+export function unixStamp(stamp) 
 {
     let date = new Date(stamp),
         year = date.getFullYear(),
@@ -387,7 +387,7 @@ function unixStamp(stamp)
 }
 
 
-function unixTime(stamp) 
+export function unixTime(stamp) 
 {
     let date = new Date(stamp),
         hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours(),
@@ -397,7 +397,7 @@ function unixTime(stamp)
     return `${hour}:${mins}`;
 }
 
-function unixStampLeft(stamp) 
+export function unixStampLeft(stamp) 
 {
     stamp = stamp / 1000;
 
@@ -421,7 +421,7 @@ function unixStampLeft(stamp)
 }
 
 
-async function onUserUnban(ctx, user) 
+export async function onUserUnban(ctx, user) 
 {
     bot.telegram.sendMessage(user.id, `💬 *Ваш аккаунт разблокирован!*\n\n🤠 Рады видеть Вас снова в наших рядах, рекомендуем больше не нарушать наши правила во избежании подобного положения!`).catch(err => {})
 
@@ -431,7 +431,7 @@ async function onUserUnban(ctx, user)
 }
 
 
-function formatDate(date, mask) 
+export function formatDate(date, mask) 
 {
     const addZero = (num) => (num < 10 ? '0' + num : '' + num);
     const months = [
@@ -474,42 +474,26 @@ function formatDate(date, mask)
 }
 
 
-function differenceInMilliseconds(d1, d2) 
+export function differenceInMilliseconds(d1, d2) 
 {
     return d1.getTime() - d2.getTime();
 }
 
 
-function differenceInSeconds(d1, d2) 
+export function differenceInSeconds(d1, d2) 
 {
     return Math.round(differenceInMilliseconds(d1, d2) / 1000);
 }
 
 
-function differenceInHours(d1, d2) 
+export function differenceInHours(d1, d2) 
 {
     return Math.round(differenceInSeconds(d1, d2) / 60 * 60);
 }
 
 
-function differenceInDays(d1, d2) 
+export function differenceInDays(d1, d2) 
 {
     return Math.round(differenceInHours(d1, d2) / 24);
 }
 
-
-module.exports = {
-    saveUser,
-    main_keyboard,
-    admin_keyboard,
-    utils,
-    time,
-    setTime,
-    getUnix,
-    unixStampLeft,
-    unixStamp,
-    unixTime,
-    onUserUnban,
-    formatDate,
-    differenceInDays
-}

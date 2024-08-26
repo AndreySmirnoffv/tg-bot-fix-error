@@ -1,25 +1,47 @@
 'use strict';
-const cron = require('node-cron');
-const fs = require("fs")
-const rq = require("prequest");
-const { bot } = require('./settings/telegramConnect.js');
-const { $user, $report } = require('./mongoose.js');
-const information = require('./ifo.json')
-const { saveUser, main_keyboard, admin_keyboard, time } = require('./settings/functions.js')
-const timers = require('./settings/timers.js');
-const session = require("telegraf/session");
-const Stage = require("telegraf/stage");
-const WizardScene = require("telegraf/scenes/wizard");
+
+import cron from 'node-cron';
+import fs from 'fs';
+import rq from 'prequest';
+import { bot } from './settings/telegramConnect.js';
+import { $user, $report } from './mongoose.js';
+import information from './ifo.json' assert { type: 'json' };
+import { saveUser, main_keyboard, admin_keyboard, time } from './settings/functions.js';
+import timers from './settings/timers.js';
+import { Telegraf, Scenes, session } from 'telegraf'; // Импортируйте Scenes из telegraf
+import { v4 as uuid } from 'uuid';
+import logger from './logger.js';
+import stiker from './settings/stikers.json' assert { type: 'json' };
+import YooModule from './paymentModule.js';
+import yooKassa from './yooKassa.json' assert { type: 'json' };
+import path from 'path';
+import { fileURLToPath } from 'url';
+const { WizardScene, Stage } = Scenes;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const commandsDir = path.join(__dirname, './commands');
+
+const commandFiles = fs.readdirSync(commandsDir).filter(file => file.endsWith('.js'));
+
+async function loadCommands() {
+    for (const file of commandFiles) {
+        const commandPath = path.join(commandsDir, file);
+        await import(commandPath);
+    }
+}
+
+await loadCommands();
+
 const url_api = information.url_api;
 const ADMINS = information.admins;
 const API = information.api;
-const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
-const { YooCheckout, ICreatePayment, IGetPaymentList, IPaymentStatus } = require('@a2seven/yoo-checkout');
-const {uuid} = require('uuidv4');
-const logger = require('./logger')
-const stiker = require('./settings/stikers.json');
 const BlackList = information.blackList;
 
+const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
+
+const yooController = new YooModule(yooKassa.shopId, yooKassa.secretKey)
 
 const editRules = new WizardScene(
     'editRules',
@@ -1431,7 +1453,7 @@ try{
 
 
 const yooKassaData = JSON.parse(fs.readFileSync("yooKassa.json").toString());
-const checkout = new YooCheckout({ shopId: yooKassaData.shopId, secretKey: yooKassaData.secretKey });
+const checkout = new YooModule({ shopId: yooKassaData.shopId, secretKey: yooKassaData.secretKey });
 
 const generatePayment = async (idempotenceKey, sum = "2.00", telegramUserId = 59549) => {
 	let createPayload = {
@@ -1489,60 +1511,51 @@ bot.action(/subPay/, async (ctx) => {
     }
 });
 
-// Обработка оплаты ЮКасса
 setInterval(async () => {
     try {
-        const list = await checkout.getPaymentList({ status: "waiting_for_capture" });
-
-        for (let i in list.items) {
-            let payment = list.items[i];
-            try {
+        const list = await yooController.getPaymentList({ status: 'waiting_for_capture' });
+        console.log('Получен список платежей:', list);
+        if(!list.length === 0){
+            console.log("Пустое сообщение заказов")
+        }else{
+            for (let payment of list.items) {
                 let amt = Math.floor(Number(payment.amount.value));
-
+    
                 if (!payment.paid) {
+                    console.log('Платёж не оплачен, пропуск...');
                     continue;
                 }
-
+    
                 let user = await $user.findOne({ id: payment.metadata.telegramUserId });
-
+    
                 if (!user) {
                     console.log('Пользователь не найден.');
                     continue;
                 }
-
-                let subs = getSubscriptions();
-                if (!subs[user.subscriptionPaymentIndex]) {
-                    console.log('Тариф пользователя не найден.');
-                    continue;
-                }
-
+    
                 if (user.referalId) {
                     let referal = await $user.findOne({ id: user.referalId });
                     if (referal) {
-                        await bot.telegram.sendMessage(referal.id, `💬 Входящее сообщение:\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n👏 Поздравляем вас, один из ваших рефералов - пополнил свой баланс!\n⭐️ Cоответственно, вы получили денежное вознаграждение от суммы его пополнения.\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Логин реферала: @${user.userNick}\n🆔 ID реферала: #${user.id}\n💵 Сумма вознаграждения: ${(information.referal * Number(amt)) / 100}₽\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n❗️ Деньги начислены на ваш реферальный баланс.`);
+                        await bot.telegram.sendMessage(referal.id, `💬 Входящее сообщение:\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n👏 Поздравляем вас, один из ваших рефералов - пополнил свой баланс!\n⭐️ Cоответственно, вы получили денежное вознаграждение от суммы его пополнения.\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Логин реферала: @${user.userNick}\n🆔 ID реферала: #${user.id}\n💵 Сумма вознаграждения: ${(information.referal * Number(amt)) / 100}₽\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n❗️ Деньги начислены на ваш реферальный баланс.`).catch(err => console.error('Ошибка отправки сообщения рефералу:', err));
                         await referal.inc("referalBalance", (information.referal * Number(amt)) / 100);
-                        await bot.telegram.sendMessage(`${information.channel}`, `💬 ВЫПЛАЧЕНО РЕФЕРАЛУ!\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${checker1.userNick} от @${user.userNick}\n🆔 ID-клиента: #${checker1.id} от #${user.id}\n👉 Получил денежное вознаграждение от своего реферала!\n💰 Сумма вознаграждения: ${(information.referal * Number(amt)) / 100}₽`);
+                        await bot.telegram.sendMessage(`${information.channel}`, `💬 ВЫПЛАЧЕНО РЕФЕРАЛУ!\n➖➖➖➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${referal.userNick} от @${user.userNick}\n🆔 ID-клиента: #${referal.id} от #${user.id}\n👉 Получил денежное вознаграждение от своего реферала!\n💰 Сумма вознаграждения: ${(information.referal * Number(amt)) / 100}₽`).catch(err => console.error('Ошибка отправки сообщения в канал:', err));
                     }
                 }
-       
+    
                 user = await $user.findOne({ id: payment.metadata.telegramUserId });
-                await user.inc("balance", Number(amt))
-				
-                await bot.telegram.sendMessage(`${user.id}`, `✅ ПОПОЛНЕНИЕ БАЛАНСА:\n➖➖➖➖➖➖➖➖➖➖\n🥳 Поздравляем! Ваш платёж прошёл успешно!\n\n💵 Ваш баланс пополнен на сумму: +${amt} ₽\n🌍 Статус оплаты: «успешно оплачен»\n\n✅ Можете приступать к выбору необходимого тарифа!`).catch(err => { console.log(err) })
-                await bot.telegram.sendMessage(`${information.channel}`, `✅ ПЛАТЕЖ УСПЕШНО ПРОВЕДЁН!\n➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${user.userNick}\n🆔 ID в боте: #${user.uid} | Telegram ID: ${user.id}\n🌟 Пополнил свой баланс!\n💰 Сумма пополнения: ${amt} ₽\n💳 Способ оплаты: «Юkassa»`).catch(err => { console.log(err) })                                  
-				await bot.telegram.sendMessage(`${information.allConsoleLogs}`, `✅ ПЛАТЕЖ УСПЕШНО ПРОВЕДЁН!\n➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${user.userNick}\n🆔 ID в боте: #${user.uid} | Telegram ID: ${user.id}\n🌟 Пополнил свой баланс!\n💰 Сумма пополнения: ${amt} ₽\n💳 Способ оплаты: «Юkassa»`).catch(err => { console.log(err) })                 
-                
-                // Установите флаг оплаты на true после успешной обработки
-                await checkout.capturePayment(payment.id, { confirm: true }, uuid());
-                continue;            
-			} catch (e) {
-					console.log(e);
-			}
-		}
-    } catch (err) {}
+                await user.inc("balance", Number(amt));
+    
+                await bot.telegram.sendMessage(`${user.id}`, `✅ ПОПОЛНЕНИЕ БАЛАНСА:\n➖➖➖➖➖➖➖➖➖➖\n🥳 Поздравляем! Ваш платёж прошёл успешно!\n\n💵 Ваш баланс пополнен на сумму: +${amt} ₽\n🌍 Статус оплаты: «успешно оплачен»\n\n✅ Можете приступать к выбору необходимого тарифа!`).catch(err => console.error('Ошибка отправки сообщения пользователю:', err));
+                await bot.telegram.sendMessage(`${information.channel}`, `✅ ПЛАТЕЖ УСПЕШНО ПРОВЕДЁН!\n➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${user.userNick}\n🆔 ID в боте: #${user.uid} | Telegram ID: ${user.id}\n🌟 Пополнил свой баланс!\n💰 Сумма пополнения: ${amt} ₽\n💳 Способ оплаты: «Юkassa»`).catch(err => console.error('Ошибка отправки сообщения в канал:', err));
+                await bot.telegram.sendMessage(`${information.allConsoleLogs}`, `✅ ПЛАТЕЖ УСПЕШНО ПРОВЕДЁН!\n➖➖➖➖➖➖➖➖➖➖\n🤵‍♂️ Клиент: @${user.userNick}\n🆔 ID в боте: #${user.uid} | Telegram ID: ${user.id}\n🌟 Пополнил свой баланс!\n💰 Сумма пополнения: ${amt} ₽\n💳 Способ оплаты: «Юkassa»`).catch(err => console.error('Ошибка отправки сообщения в консоль:', err));
+    
+                await yooController.capturePayment(payment.id, { amount: { value: amt, currency: 'RUB' } });
+            }
+        }
+    } catch (e) {
+        console.error(`Произошла ошибка в функции "setInterval". Код ошибки: ${JSON.stringify(e.message)}\n${JSON.parse(e.stack)}`);
+    }
 }, 3000);
-
-
 // Создаем менеджера сцен
 const stage = new Stage();
 stage.register(sender);
@@ -1565,12 +1578,6 @@ stage.register(delModer);
 stage.register(editRules);
 bot.use(session());
 bot.use(stage.middleware());
-
-
-fs.readdirSync('./commands').forEach((command) => {
-    require(`./commands/${command}`);
-});
-
 
 cron.schedule('00 55 00 * * *', async function() {
     information.dayFreeCount = 0;

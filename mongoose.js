@@ -1,8 +1,8 @@
-const mongo = require('mongoose');
-const chalk = require('chalk');
+import mongo from 'mongoose'
+import chalk from 'chalk'
 
 
-const userSchema = new mongo.Schema({
+export const userSchema = new mongo.Schema({
     dateRegistrator: String,
     uid: Number,
     id: {
@@ -27,28 +27,28 @@ const userSchema = new mongo.Schema({
 });
 
 
-const reportSchema = new mongo.Schema({
+export const reportSchema = new mongo.Schema({
     senderId: Number,
     date: String,
     requestName: String
 });
 
 
-const autoSchema = new mongo.Schema({
+export const autoSchema = new mongo.Schema({
     gosnumber: String,
     vin: String
 });
 
 
-const keySchema = new mongo.Schema({
+export const keySchema = new mongo.Schema({
     key: String
 });
 
 
-const $user = mongo.model("users", userSchema);
-const $report =  mongo.model("reports", reportSchema);
-const $auto =  mongo.model("autos", autoSchema);
-const $key =  mongo.model("key", keySchema);
+export const $user = mongo.model("users", userSchema);
+export const $report =  mongo.model("reports", reportSchema);
+export const $auto =  mongo.model("autos", autoSchema);
+export const $key =  mongo.model("key", keySchema);
 
 
 console.log(chalk.keyword(`yellow`).bold.underline(`[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] [MONGOOSE] > `) + chalk.red.bold.underline(`Идёт подключение к серверу...`))
@@ -80,9 +80,3 @@ $user.prototype.dec = function(field, value)
 }
 
 
-module.exports = {
-    $user,
-    $report,
-    $auto,
-    $key
-};

@@ -1,12 +1,14 @@
-const { saveUser, main_keyboard, admin_keyboard } = require('../settings/functions.js')
-const information = require('../ifo.json');
-const { $user, $report } = require('../mongoose.js');
-const { Markup } = require('telegraf')
-const { bot } = require('../settings/telegramConnect.js');
-const fs = require("fs")
+import { saveUser, main_keyboard, admin_keyboard } from '../settings/functions.js';
+import information from '../ifo.json' assert { type: 'json' };
+import { $user, $report } from '../mongoose.js';
+import { Markup } from 'telegraf';
+import { bot } from '../settings/telegramConnect.js';
+import fs from 'fs';
+import stiker from '../settings/stikers.json' assert { type: 'json' };
+import rq from 'prequest';
+
 const ADMINS = information.admins;
-const stiker = require('../settings/stikers.json');
-const rq = require("prequest");
+
 
 
 bot.hears('🅰️дминка', async (ctx) => {
