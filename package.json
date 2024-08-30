@@ -6,6 +6,9 @@
     "main": "index.js",
     "author": "Telegrammer",
     "license": "Apache-2.0",
+    "scripts": {
+        "start": "node index.js"
+    },
     "dependencies": {
         "@a2seven/yoo-checkout": "^1.1.4",
         "@gumlet/gif-resize": "^1.1.1",
@@ -14,7 +17,6 @@
         "body-parser": "^1.19.0",
         "chalk": "^4.1.0",
         "child_process": "^1.0.2",
-        "cron": "^1.8.2",
         "crypto": "^1.0.1",
         "dotenv": "^16.1.3",
         "gifsicle": "^5.1.0",
@@ -29,7 +31,7 @@
         "millisecond": "^0.1.2",
         "mongoose": "^5.13.15",
         "needle": "^2.6.0",
-        "node-cron": "^2.0.3",
+        "node-cron": "^3.0.3",
         "node-qiwi-api": "^2.1.2",
         "node-telegram-bot-api": "^0.51.0",
         "nodemon": "^2.0.22",

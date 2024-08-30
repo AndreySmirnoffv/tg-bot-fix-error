@@ -5,6 +5,7 @@ import { $user, $report } from '../mongoose.js';
 import fs from 'fs';
 import stiker from '../settings/stikers.json' assert { type: 'json' };
 import rq from 'prequest';
+import subs from '../subscriptions.json' assert {type: 'json'}
 
 const num_requests = information.num_requests;
 const BlackList = information.blackList;
@@ -53,7 +54,6 @@ const getSubscriptions = () => {
 const generateSubListKeyboard = (callback_tag = `subPayConfirm`) => {
 
     let keyboard = [];
-    let subs = require("../subscriptions.json");
 	let prefix = "отчёт"
 	
     for(let i in subs) {
