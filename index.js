@@ -1469,7 +1469,7 @@ const generatePayment = async (idempotenceKey, sum = "2.00", telegramUserId = 59
 			"telegramUserId": telegramUserId
 		}
 	};
-	let payment = await checkout.createPayment(createPayload, idempotenceKey);
+	let payment = await checkout.createPayment(createPayload);
 	return payment;
 }
 

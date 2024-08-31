@@ -67,7 +67,7 @@ export async function saveUser(id, count, name) {
 						]
 					}
 		    }).catch(err => { console.log(err) })
-            await bot.telegram.sendMessage(`${information.channel}`, `➕ ЗАРЕГИСТРИРОВАЛСЯ НОВЫЙ КЛИЕНТ!\n➖➖➖➖➖➖➖➖➖\n👤 Логин клиента: @${user.userNick}\n🆔 Телеграм ID: ${user.id}\n💝 Клиенту был начислен бонус за регистрацию!\n💵 Баланс клиента: ${user.balance} ₽\n📙 Дата и время регистрации: ${user.dateRegistrator}`).catch(err => { console.log(err) })
+            await bot.telegram.sendMessage(`${Number(information.channel)}`, `➕ ЗАРЕГИСТРИРОВАЛСЯ НОВЫЙ КЛИЕНТ!\n➖➖➖➖➖➖➖➖➖\n👤 Логин клиента: @${user.userNick}\n🆔 Телеграм ID: ${user.id}\n💝 Клиенту был начислен бонус за регистрацию!\n💵 Баланс клиента: ${user.balance} ₽\n📙 Дата и время регистрации: ${user.dateRegistrator}`).catch(err => { console.log(err) })
             return true;
         }
     }catch(e)
@@ -272,9 +272,6 @@ export const utils = {
     },
     decl: (n, titles) => {
         return titles[(n % 10 === 1 && n % 100 !== 11) ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
-    },
-    random: (x, y) => {
-        return y ? Math.round(Math.random() * (y - x)) + x : Math.round(Math.random() * x);
     },
     pick: (array) => {
         return array[utils.random(0, array.length - 1)];
