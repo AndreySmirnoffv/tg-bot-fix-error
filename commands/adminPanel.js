@@ -1,10 +1,10 @@
 import { saveUser, main_keyboard, admin_keyboard } from '../settings/functions.js';
-import information from '../ifo.json' assert { type: 'json' };
+import information from '../ifo.json' with { type: 'json' };
 import { $user, $report } from '../mongoose.js';
 import { Markup } from 'telegraf';
 import { bot } from '../settings/telegramConnect.js';
 import fs from 'fs';
-import stiker from '../settings/stikers.json' assert { type: 'json' };
+import stiker from '../settings/stikers.json' with { type: 'json' };
 import rq from 'prequest';
 
 const ADMINS = information.admins;

@@ -44,12 +44,22 @@ export const keySchema = new mongo.Schema({
     key: String
 });
 
+export const paymentSchema = new mongo.Schema({
+    paymentId: String,
+    userId: Number,
+    paymentDate: Date,
+    amount: Number,
+    paymentMethod: String,
+    status: String,
+    username: String
+})
+
 
 export const $user = mongo.model("users", userSchema);
-export const $report =  mongo.model("reports", reportSchema);
-export const $auto =  mongo.model("autos", autoSchema);
-export const $key =  mongo.model("key", keySchema);
-
+export const $report = mongo.model("reports", reportSchema);
+export const $auto = mongo.model("autos", autoSchema);
+export const $key = mongo.model("key", keySchema);
+export const $payment = mongo.model("payment", paymentSchema)
 
 console.log(chalk.keyword(`yellow`).bold.underline(`[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] [MONGOOSE] > `) + chalk.red.bold.underline(`Идёт подключение к серверу...`))
 mongo.connect('mongodb://127.0.0.1:27017/newBot', {

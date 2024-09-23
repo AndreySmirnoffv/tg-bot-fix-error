@@ -1,7 +1,7 @@
 import { $user } from '../mongoose.js';
-import information from '../ifo.json' assert { type: 'json' };
+import information from '../ifo.json' with { type: 'json' };
 import { bot } from './telegramConnect.js';
-import stiker from '../settings/stikers.json' assert { type: 'json' };
+import stiker from '../settings/stikers.json' with { type: 'json' };
 import rq from 'prequest';
 
 const ADMINS = information.admins;

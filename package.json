@@ -7,7 +7,8 @@
     "author": "Telegrammer",
     "license": "Apache-2.0",
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "dev": "nodemon index.js"
     },
     "dependencies": {
         "@a2seven/yoo-checkout": "^1.1.4",
@@ -34,7 +35,6 @@
         "node-cron": "^3.0.3",
         "node-qiwi-api": "^2.1.2",
         "node-telegram-bot-api": "^0.51.0",
-        "nodemon": "^2.0.22",
         "npm": "^10.8.2",
         "prequest": "^1.0.0",
         "sharp": "^0.27.1",
@@ -47,5 +47,8 @@
         "vk-io": "^4.8.3",
         "winston": "^3.11.0",
         "yookassa": "^0.1.1"
+    },
+    "devDependencies": {
+        "nodemon": "^3.1.4"
     }
 }

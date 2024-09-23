@@ -1,11 +1,11 @@
 import { saveUser } from '../settings/functions.js';
-import information from '../ifo.json' assert { type: 'json' };
+import information from '../ifo.json' with { type: 'json' };
 import { bot } from '../settings/telegramConnect.js';
 import { $user, $report } from '../mongoose.js';
 import fs from 'fs';
-import stiker from '../settings/stikers.json' assert { type: 'json' };
+import stiker from '../settings/stikers.json' with { type: 'json' };
 import rq from 'prequest';
-import subs from '../subscriptions.json' assert {type: 'json'}
+import subs from '../subscriptions.json' with {type: 'json'}
 
 const num_requests = information.num_requests;
 const BlackList = information.blackList;

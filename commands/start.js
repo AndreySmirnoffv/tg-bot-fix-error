@@ -1,6 +1,6 @@
 import { bot } from '../settings/telegramConnect.js';
 import { $user } from '../mongoose.js';
-import information from '../ifo.json' assert { type: 'json' };
+import information from '../ifo.json' with { type: 'json' };
 import { saveUser, main_keyboard } from '../settings/functions.js';
 
 
@@ -18,7 +18,7 @@ bot.hears(/\/start (.+)|\/start/i, async (ctx) => {
             if(timestamp - ctx.update.message.date > 150) return;
         }
 		
-        if(!await saveUser(ctx.chat.id, count, ctx.from.username)) return;
+        if(!await saveUser(ctx.from.id, count, ctx.from.username)) return;
     }
 	
     let user = await $user.findOne({ id: ctx.from.id })
