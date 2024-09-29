@@ -36,7 +36,7 @@ export async function saveUser(id, count, name) {
 							}]
 						]
 					}
-		    }).catch(err => { console.log(err) })
+		    }).catch(err => { console.log("saveUser " + err) })
                         await bot.telegram.sendMessage(`${information.channel}`, `➕ ЗАРЕГИСТРИРОВАЛСЯ НОВЫЙ КЛИЕНТ!\n➖➖➖➖➖➖➖➖➖\n👤 Логин клиента: @${user.userNick}\n🆔 Телеграм ID: ${user.id}\n💝 Клиенту был начислен бонус за регистрацию!\n💵 Баланс клиента: ${user.balance} ₽\n📙 Дата и время регистрации: ${user.dateRegistrator}`).catch(err => { console.log(err) })
             return true;
         } else {
@@ -66,7 +66,7 @@ export async function saveUser(id, count, name) {
 							}]
 						]
 					}
-		    }).catch(err => { console.log(err) })
+		    }).catch(err => { console.log("after save user " + err) })
             await bot.telegram.sendMessage(`${Number(information.channel)}`, `➕ ЗАРЕГИСТРИРОВАЛСЯ НОВЫЙ КЛИЕНТ!\n➖➖➖➖➖➖➖➖➖\n👤 Логин клиента: @${user.userNick}\n🆔 Телеграм ID: ${user.id}\n💝 Клиенту был начислен бонус за регистрацию!\n💵 Баланс клиента: ${user.balance} ₽\n📙 Дата и время регистрации: ${user.dateRegistrator}`).catch(err => { console.log(err) })
             return true;
         }
