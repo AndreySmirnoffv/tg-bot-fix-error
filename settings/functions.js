@@ -3,6 +3,7 @@ import information from '../ifo.json' with { type: 'json' };
 import { bot } from './telegramConnect.js';
 import stiker from '../settings/stikers.json' with { type: 'json' };
 import rq from 'prequest';
+import moment from 'moment-timezone'
 
 const ADMINS = information.admins;
 
@@ -321,7 +322,6 @@ export function time(type) {
         return gone
     }
     if (type == 3) {
-        let moment = require('moment-timezone')
         let a = moment.tz(new Date(), 'Europe/Moscow')
 
         return a.format();

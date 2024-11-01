@@ -30,6 +30,7 @@
         "jimp": "^0.16.1",
         "md5": "^2.3.0",
         "millisecond": "^0.1.2",
+        "moment-timezone": "^0.5.46",
         "mongoose": "^5.13.15",
         "needle": "^2.6.0",
         "node-cron": "^3.0.3",

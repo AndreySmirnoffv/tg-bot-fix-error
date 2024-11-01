@@ -1,5 +1,4 @@
 'use strict';
-
 import cron from 'node-cron';
 import fs from 'fs';
 import rq from 'prequest';
@@ -17,6 +16,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv'
 import { Payment } from './PaymentLogic.js';
+
 dotenv.config({ path: "./.env" })
 
 const { WizardScene, Stage } = Scenes;
@@ -1290,7 +1290,7 @@ const all_vin = new WizardScene(
 
 
 async function saveBase() {
-    require('fs').writeFileSync('./node_modules/load-json-file/promt/etc/ifo.json', JSON.stringify(information, null, '\t'));
+    fs.writeFileSync('./ifo.json', JSON.stringify(information, null, '\t'));
     return true;
 }
 
@@ -1328,7 +1328,7 @@ bot.action('onBot', async (ctx) => {
 
 //Получение списка доступных тарифных планов
 const getSubscriptions = () => {
-    return JSON.parse(fs.readFileSync("subscriptions.json".toString()));
+    return JSON.parse(fs.readFileSync("./subscriptions.json".toString()));
 }
 
 const generateSubListKeyboard = (callback_tag = `subInfo`) => {

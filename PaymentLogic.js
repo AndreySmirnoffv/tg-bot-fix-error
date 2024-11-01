@@ -1,5 +1,4 @@
 import { yooController } from "./index.js";
-import { v4 as uuid } from 'uuid';
 import { $payment, $user } from "./mongoose.js";
 import information from './ifo.json' with {type: "json"}
 

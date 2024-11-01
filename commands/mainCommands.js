@@ -12,15 +12,15 @@ const BlackList = information.blackList;
 
 
 async function logging(id, text) {
-    let test = await isFileExists(`./logs/Reports #${id}.txt`)
+    let test = await isFileExists(`../logs/Reports #${id}.txt`)
 
     if (test) {
-        await fs.unlinkSync(`./logs/Reports #${id}.txt`)
-        fs.writeFile(`./logs/Reports #${id}.txt`, `${text}`, function(err) {
+        await fs.unlinkSync(`../logs/Reports #${id}.txt`)
+        fs.writeFile(`../logs/Reports #${id}.txt`, `${text}`, function(err) {
             if (err) throw err;
         });
     } else {
-        await fs.writeFile(`./logs/Reports #${id}.txt`, `${text}`, function(err) {
+        await fs.writeFile(`../logs/Reports #${id}.txt`, `${text}`, function(err) {
             if (err) throw err;
         });
     }
@@ -48,7 +48,7 @@ function isFileExists(path) {
 }
 
 const getSubscriptions = () => {
-    return JSON.parse(fs.readFileSync("subscriptions.json".toString()));
+    return JSON.parse(fs.readFileSync("../subscriptions.json".toString()));
 }
 
 const generateSubListKeyboard = (callback_tag = `subPayConfirm`) => {
@@ -582,13 +582,18 @@ bot.hears('⭕️ Правила', async (ctx) => {
 
 
 bot.hears('🆘 Помощь', async (ctx) => {
-    if (BlackList.includes(ctx.from.id)) return await ctx.replyWithMarkdown(`🪫 *Закончились запросы на балансе у вашего токена к API, пожалуйста пополните свой баланс!\n\n- Всю подробную информацию вы найдёте на сайте источника информации AV100, ссылка для перехода на сайт: https://data.av100.org*`)
+    console.log("hello world")
+
+    if (BlackList.includes(ctx.from.id)) return await ctx.replyWithMarkdownV2(`🪫 *Закончились запросы на балансе у вашего токена к API, пожалуйста пополните свой баланс!\n\n- Всю подробную информацию вы найдёте на сайте источника информации AV100, ссылка для перехода на сайт: https://data.av100.org*`)
+    await ctx.telegram.sendMessage(ctx.from.id, `*🤖 Работа бота временно приостановлена!\nНа данный момент мы работаем над внедрением современных технологий, пожалуйста, наберитесь немного терпения и загляните к нам по позже.\n\nМы с радостью будем ждать Вашего повторного визита! 😊*`)
+
     if (information.onBot === 0) 
     {
         await bot.telegram.sendSticker(ctx.from.id, stiker.bot_off).catch(err => { console.log(err) })
-        return await ctx.replyWithMarkdown(`*🤖 Работа бота временно приостановлена!\nНа данный момент мы работаем над внедрением современных технологий, пожалуйста, наберитесь немного терпения и загляните к нам по позже.\n\nМы с радостью будем ждать Вашего повторного визита! 😊*`)
+        return await ctx.replyWithMarkdownV2(`*🤖 Работа бота временно приостановлена!\nНа данный момент мы работаем над внедрением современных технологий, пожалуйста, наберитесь немного терпения и загляните к нам по позже.\n\nМы с радостью будем ждать Вашего повторного визита! 😊*`)
     }
-    
+
+
     const userId = ctx.from.id;
     let newUser = await $user.findOne({ id: ctx.from.id })
     let count = await $user.countDocuments()
@@ -600,17 +605,18 @@ bot.hears('🆘 Помощь', async (ctx) => {
             let timestamp = Math.floor(Date.now() / 1000);
             if(timestamp - ctx.update.message.date > 4) return;
         }	
+
         await saveUser(userId, count, ctx.from.username)
     }
 
 	let user = await $user.findOne({ id: ctx.from.id })
     if (user.isBanned === true)
     {
-        await bot.telegram.sendSticker(user.id, stiker.stop_ban).catch(err => { console.log(err) })
-        return await ctx.replyWithMarkdown(`🚫 *ВАШ ПРОФИЛЬ ЗАБЛОКИРОВАН!*\n➖➖➖➖➖➖➖➖➖➖\n👉 *Раздел больше недоступен для вас!*\n👮‍♂️ Заблокированы до *${user.timeBan}г.*\n💬 Причина: *«${user.reasonBan}»*`)
+        await bot.telegram.sendSticker(ctx.from.id, stiker.stop_ban).catch(err => console.log("sticker error " + err))
+        return await ctx.replyWithMarkdownV2(`🚫 *ВАШ ПРОФИЛЬ ЗАБЛОКИРОВАН!*\n➖➖➖➖➖➖➖➖➖➖\n👉 *Раздел больше недоступен для вас!*\n👮‍♂️ Заблокированы до *${user.timeBan}г.*\n💬 Причина: *«${user.reasonBan}»*`)
     }
 	
-    return ctx.scene.enter("help")
+    // return ctx.scene.enter("help")
 });
 
 

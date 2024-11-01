@@ -62,7 +62,7 @@ export const $key = mongo.model("key", keySchema);
 export const $payment = mongo.model("payment", paymentSchema)
 
 console.log(chalk.keyword(`yellow`).bold.underline(`[${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}] [MONGOOSE] > `) + chalk.red.bold.underline(`Идёт подключение к серверу...`))
-mongo.connect('mongodb://127.0.0.1:27017/newBot', {
+mongo.connect('mongodb://localhost:27017/newBot', {
     useNewUrlParser: true,
     authSource: "admin",
     useUnifiedTopology: true

@@ -1,11 +1,9 @@
 import { saveUser, main_keyboard, admin_keyboard } from '../settings/functions.js';
 import information from '../ifo.json' with { type: 'json' };
 import { $user, $report } from '../mongoose.js';
-import { Markup } from 'telegraf';
 import { bot } from '../settings/telegramConnect.js';
-import fs from 'fs';
+import * as fs from 'fs';
 import stiker from '../settings/stikers.json' with { type: 'json' };
-import rq from 'prequest';
 
 const ADMINS = information.admins;
 
@@ -195,7 +193,7 @@ bot.hears('📣 Промоакции', async (ctx) => {
 //Модуль расширенных тарифных планов
 const sub_editor_cache = {};
 const getSubscriptions = () => {
-    return JSON.parse(fs.readFileSync("subscriptions.json".toString()));
+    return JSON.parse(fs.readFileSync("../subscriptions.json".toString()));
 }
 
 const generateSubListKeyboard = (callback_tag = `subInfo`) => {
@@ -206,7 +204,7 @@ const generateSubListKeyboard = (callback_tag = `subInfo`) => {
 	
     for(let i in subs) {
 		
-		let cost = subs[i].price/subs[i].requests;
+		let cost = subs[i].price / subs[i].requests;
 		
 		if(subs[i].requests === 2 || subs[i].requests === 3 || subs[i].requests === 4) prefix = "отчёта"
 		else if(subs[i].requests >= 5) prefix = "отчётов"
@@ -316,7 +314,7 @@ bot.action(/subDeleteAll/, async (ctx) => {
     subs.splice(idx, 1);
 
     await ctx.replyWithMarkdown(`🗑 *Тариф успешно удалён!*`);
-    await fs.writeFileSync("subscriptions.json", JSON.stringify(subs, null, "\t"));
+    await fs.writeFileSync("../subscriptions.json", JSON.stringify(subs, null, "\t"));
 });
 
 bot.action(/subCreateNew/, async (ctx) => {
@@ -326,7 +324,7 @@ bot.action(/subCreateNew/, async (ctx) => {
     subs.push(subs[0]);
 
     await ctx.replyWithMarkdown(`✅ *Дубликат первого тарифа создан!*`);
-    await fs.writeFileSync("subscriptions.json", JSON.stringify(subs, null, "\t"));
+    await fs.writeFileSync("../subscriptions.json", JSON.stringify(subs, null, "\t"));
 });
 
 bot.action(/subEdit/, async (ctx) => {
@@ -460,7 +458,7 @@ bot.hears(/-sub/, async (ctx) => {
         }});
 
     delete sub_editor_cache[ctx.from.id];
-    fs.writeFileSync("subscriptions.json", JSON.stringify(subs, null, "\t"));
+    fs.writeFileSync("../subscriptions.json", JSON.stringify(subs, null, "\t"));
 })
 
 bot.hears(`♻️ Тарифные планы`, async (ctx) => {
@@ -605,27 +603,17 @@ bot.action(/usersGoto/, async (ctx) => {
 
 
 async function logging(text) {
-    let test = await isFileExists(`./logs/All Reports.txt`)
+    let test = await isFileExists(`../logs/All Reports.txt`)
 
     if (test) {
-        await fs.appendFileSync(`./logs/All Reports.txt`, `\n${text}`, function(err) {
+        await fs.appendFileSync(`../logs/All Reports.txt`, `\n${text}`, function(err) {
             if (err) throw err;
         })
     } else {
-        await fs.writeFile(`./logs/All Reports.txt`, `\n${text}`, function(err) {
+        await fs.writeFile(`../logs/All Reports.txt`, `\n${text}`, function(err) {
             if (err) throw err;
         });
     }
-}
-
-
-function readFile(path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, 'utf8', (err, data) => {
-            if (err) return reject(err)
-            resolve(data)
-        })
-    })
 }
 
 function isFileExists(path) {
@@ -690,8 +678,8 @@ bot.action('getHistory', async (ctx) => {
         await saveUser(userId, count, ctx.from.username)
     }
 	
-    await ctx.replyWithDocument({ source: `./logs/All Reports.txt` })
-    fs.unlinkSync(`./logs/All Reports.txt`)
+    await ctx.replyWithDocument({ source: `../logs/All Reports.txt` })
+    fs.unlinkSync(`../logs/All Reports.txt`)
 });
 
 
